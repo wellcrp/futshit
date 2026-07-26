@@ -31,6 +31,8 @@ npm run build
 npm start
 ```
 
+> O servidor usa `process.env.PORT` se definido; caso contrário, roda em `8080`.
+
 ## Arquivos importantes
 - `.gitignore` — ignora `.claude`, `node_modules`, `dist`, e arquivos temporários.
 - `src/index.ts` — servidor Express com endpoints `POST /api/jogos` e `GET /api/ranking`.
