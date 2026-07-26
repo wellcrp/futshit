@@ -33,6 +33,30 @@ npm start
 
 > O servidor usa `process.env.PORT` se definido; caso contrário, roda em `8080`.
 
+## Deploy no Railway
+
+1. Faça commit e push do repositório para o GitHub.
+2. No Railway, crie um novo projeto e conecte o repositório GitHub.
+3. Configure o build command como:
+
+```bash
+npm run railway-build
+```
+
+4. Configure o start command como:
+
+```bash
+npm start
+```
+
+5. Se quiser forçar a porta `8080`, adicione a variável de ambiente `PORT` com valor `8080`.
+
+> Observação: o npm moderno prefere `--omit=dev` em vez de `production` para ignorar dependências de desenvolvimento. Isso evita o aviso `npm warn config production Use --omit=dev instead.`
+
+6. Verifique se Railway está usando `NODE_ENV=production` por padrão; caso contrário, não é necessário definir, pois o start já define esse valor localmente.
+
+7. Depois do deploy, acesse a URL fornecida pelo Railway.
+
 ## Arquivos importantes
 - `.gitignore` — ignora `.claude`, `node_modules`, `dist`, e arquivos temporários.
 - `src/index.ts` — servidor Express com endpoints `POST /api/jogos` e `GET /api/ranking`.
