@@ -32,6 +32,7 @@ npm start
 ```
 
 ## Arquivos importantes
+- `.gitignore` — ignora `.claude`, `node_modules`, `dist`, e arquivos temporários.
 - `src/index.ts` — servidor Express com endpoints `POST /api/jogos` e `GET /api/ranking`.
 - `src/public/index.html` — página pública (ranking).
 - `src/public/admin/index.html` — painel administrativo (submissão de listas).
@@ -40,6 +41,12 @@ npm start
 ## Endpoints
 - `GET /api/ranking` — retorna o ranking agregado.
 - `POST /api/jogos` — aceita `{ data: "YYYY-MM-DD", listaTexto: "..." }` e persiste a entrada.
+
+## URL de administração e credenciais
+- A tela de login do admin está disponível em `http://localhost:3000/login`.
+- Credenciais atuais:
+  - Usuário: `futi`
+  - Senha: `futi12QW!@qw`
 
 ## Caso precise criar os manifestos manualmente
 
