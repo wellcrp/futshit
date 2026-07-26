@@ -1,0 +1,50 @@
+*   PROJETO INICIAL
+*   PROJETO SITE HOMEPAGE MESMO
+    -   TEMPLATE
+        -   MODERNO E SIMPLES
+        -   FACIL ENTENDIMENTO DA INFORMAÇÃO
+*   CRIAÇÃO DE PAGINA WEB INDEX.HTML mesmo simples.
+
+1   INTRODUÇÃO
+    -   Será necessario criar um sistema web para resolver a problematica de contabilizar a presença de jogadores por jogo de todo sabado.
+        Todo sabado, é realizado um jogo de futebol society contendo 12 players, contudo o problema que tem um numero de jogadores alem
+        para jogar sabado, e estamos com problema de escalar os jogaodres, para isso, precisamos gerar uma escala dos jogadores baseado nas listagem de cada sabado
+        para contabilizar por jogo.
+
+        Cada jogo será cobrado 1 ponto aos jogadores que estão indo, quem não for, será contabailizado 0. Caso o jogador for jogar, e machucar durante a partida, será contabilizado 1 ponto também.
+        Em caso de conter jogadores indesejados a punição será a retirada do mesmo do horario.
+
+2   SOLUÇÃO PROPOSTA
+    2.1 PAINEL ADMINISTRATIVO
+        -   PAGINA DE ADICIONAR JOGO
+            -   Criar um painel administrativo no qual, será posta uma lista de todos os jogadores que foram jogar no sabado.
+            -   Quando adicionar a primeira lista de jogadores, as demais listas terá que reconhecer os nomes e se caso tiver o mesmo nome, terá que adicionar 1 ponto e assim incrementando para cada adição.
+            -   Na tela de adicionar será necessário adicionar alem do textarea para adicionar a listagem dos jogadores, adicionar um campo de date, para adicionar a data do jogo.
+    2.2 ARMAZENAMENTO
+        -   Será necessario criar um jogadoresEscalados.json, e armazenar os jogadores em uma string para garantir a segurança.
+        -   Quando realizar o submit para salvar, criar um metodo asyncrono em javascript, para salvar a listagem posta, no arquivo jogadoresEscalados.json        
+        -   Adicionar tbm no arquivo json um campo novo da data do jogo realizado        
+    2.3 FORMATO DA LISTAGEM DOS JOGADORES
+        1️⃣ Dalton    ✅
+        2️⃣ Igor      ✅
+        3️⃣ Anelis    ✅
+        4️⃣ Roberley  ✅
+        5️⃣ Anelis    ✅
+        6️⃣ Anderson  ✅
+        7️⃣ Trombela  ✅  
+        8️⃣ Mateus    ✅
+        9️⃣ Felipe          ✅
+        🔟 Ricardo         ✅
+        1️⃣1️⃣ Guilherme    ✅
+        1️⃣2️⃣ Vitor        ✅
+        1️⃣3️⃣ Pedro        ✅
+        1️⃣4️⃣ Piruka       ✅
+           
+3   WEBSITE
+    3.1 Na parte de visualização, terá que criar uma tabela de classificação de todos os nomes dos jogadores por posicoes, por exemplo:
+        -   Jogador com 1 ponto será o primeiro da lista escalado.
+        -   Jogador com 4 pontos será o primeiro da lista escalado.
+        -   Jogador com 3 pontos será o segundo e assim Sucessivamente.
+
+4   AO REALIZAR ANALISE DESSE DOCUMENTO, REALIZAR PERGUNTAS AO DESENVOLVEDOR ANTES DE REALIZAR A IMPLEMENTAÇÃO.
+           
