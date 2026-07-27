@@ -1,8 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const sourceDir = path.resolve(__dirname, '..', 'src', 'public');
-const targetDir = path.resolve(__dirname, '..', 'dist', 'public');
+const sourcePublic = path.resolve(__dirname, '..', 'src', 'public');
+const targetPublic = path.resolve(__dirname, '..', 'dist', 'public');
+const sourceData = path.resolve(__dirname, '..', 'src', 'data');
+const targetData = path.resolve(__dirname, '..', 'dist', 'data');
 
 function copyDirectory(src, dest) {
   if (!fs.existsSync(src)) {
@@ -24,5 +26,7 @@ function copyDirectory(src, dest) {
   }
 }
 
-copyDirectory(sourceDir, targetDir);
-console.log(`Copied static files from ${sourceDir} to ${targetDir}`);
+copyDirectory(sourcePublic, targetPublic);
+copyDirectory(sourceData, targetData);
+console.log(`Copied static files from ${sourcePublic} to ${targetPublic}`);
+console.log(`Copied data files from ${sourceData} to ${targetData}`);

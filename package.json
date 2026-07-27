@@ -6,6 +6,7 @@
     "build": "node ./node_modules/typescript/bin/tsc -p tsconfig.json && node ./scripts/copy-static.js",
     "postinstall": "npm run build",
     "railway-build": "npm install --omit=dev && npm run build",
+    "prestart": "npm run build",
     "copy-static": "node ./scripts/copy-static.js",
     "start": "cross-env NODE_ENV=production node dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts"

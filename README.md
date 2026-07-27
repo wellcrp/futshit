@@ -31,7 +31,7 @@ npm run build
 npm start
 ```
 
-> O servidor usa `process.env.PORT` se definido; caso contrário, roda em `8080`.
+> O servidor usa `process.env.PORT` se definido. Localmente, ele roda em `3000` por padrão; em produção, usa `8080` quando `NODE_ENV=production`.
 
 ## Deploy no Railway
 
@@ -69,7 +69,7 @@ npm start
 - `POST /api/jogos` — aceita `{ data: "YYYY-MM-DD", listaTexto: "..." }` e persiste a entrada.
 
 ## URL de administração e credenciais
-- A tela de login do admin está disponível em `http://localhost:3000/login`.
+- A tela de login do admin está disponível em `http://localhost:8080/login`.
 - Credenciais atuais:
   - Usuário: `futi`
   - Senha: `futi12QW!@qw`
@@ -106,8 +106,8 @@ Adicionar scripts ao `package.json` (exemplo):
 
 ## Testes manuais rápidos
 
-1. Abra `http://localhost:3000/admin/` e submeta uma lista de jogadores (uma por linha).
-2. Verifique `http://localhost:3000/` ou `GET /api/ranking` para confirmar as pontuações.
+1. Abra `http://localhost:8080/admin/` e submeta uma lista de jogadores (uma por linha).
+2. Verifique `http://localhost:8080/` ou `GET /api/ranking` para confirmar as pontuações.
 
 ## Observações e segurança
 - Faça backup do arquivo `src/data/jogadoresEscalados.json` antes de operações em massa.
