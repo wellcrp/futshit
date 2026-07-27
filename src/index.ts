@@ -159,8 +159,9 @@ app.get('/api/ranking', async (_req, res) => {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-const port = process.env.PORT || 8080;
-app.listen(port, () => {
+const defaultPort = process.env.NODE_ENV === 'production' ? 8080 : 3000;
+const port = process.env.PORT ? parseInt(process.env.PORT, 10) : defaultPort;
+app.listen(port, '0.0.0.0', () => {
   console.log(`Server running on port ${port}`);
   const url = `http://localhost:${port}/admin/`;
   try {
