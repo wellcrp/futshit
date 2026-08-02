@@ -20,10 +20,15 @@ const ADMIN_PASS_HASH = 'ce4930aa34922b23c8fccaf1b3a9bcd578b0f5a50a1b881520882ed
 const AUTH_COOKIE_NAME = 'admin_session';
 const AUTH_SECRET = 'secret-key-for-auth-token-change-if-needed';
 
-async function loadData() {
+interface JogoEntry {
+  data: string;
+  lista: string[];
+}
+
+async function loadData(): Promise<JogoEntry[]> {
   try {
     const raw = await fs.readFile(dataFile, 'utf8');
-    return JSON.parse(raw);
+    return JSON.parse(raw) as JogoEntry[];
   } catch (e) {
     return [];
   }
@@ -70,18 +75,54 @@ function normalizeName(name: string) {
   return name.replace(/[✓✔✅]/g, '').trim().toLowerCase();
 }
 
+function parsePlayerLines(listaTexto: string) {
+  return listaTexto
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .map((line) => line.replace(/[^[\p{L}\s]+/gu, ' '))
+    .map((line) => line.replace(/\s+/g, ' ').trim())
+    .filter(Boolean);
+}
+
 app.post('/api/jogos', async (req, res) => {
   const { data, listaTexto } = req.body as { data?: string; listaTexto?: string };
   if (!data || !listaTexto) return res.status(400).json({ error: 'Parâmetros inválidos' });
 
-  const lista = listaTexto
-    .split(/\r?\n/)
-    .map((l) => l.replace(/^[^\p{L}]+/u, ''))
-    .map((l) => l.trim())
-    .filter(Boolean);
+  const lista = parsePlayerLines(listaTexto);
+  if (!lista.length) return res.status(400).json({ error: 'Nenhum jogador válido encontrado' });
 
   const arr = await loadData();
   arr.push({ data, lista });
+  await saveData(arr);
+  return res.json({ ok: true });
+});
+
+app.get('/api/jogos', async (_req, res) => {
+  const arr = await loadData();
+  return res.json(arr);
+});
+
+app.get('/api/jogos/:data', async (req, res) => {
+  const { data } = req.params;
+  const arr = await loadData();
+  const jogo = arr.find((entry) => entry.data === data);
+  if (!jogo) return res.status(404).json({ error: 'Jogo não encontrado' });
+  return res.json(jogo);
+});
+
+app.put('/api/jogos/:data', async (req, res) => {
+  const { data } = req.params;
+  const { listaTexto } = req.body as { listaTexto?: string };
+  if (!listaTexto) return res.status(400).json({ error: 'Parâmetros inválidos' });
+
+  const lista = parsePlayerLines(listaTexto);
+  if (!lista.length) return res.status(400).json({ error: 'Nenhum jogador válido encontrado' });
+
+  const arr = await loadData();
+  const index = arr.findIndex((entry) => entry.data === data);
+  if (index === -1) return res.status(404).json({ error: 'Jogo não encontrado' });
+
+  arr[index].lista = lista;
   await saveData(arr);
   return res.json({ ok: true });
 });
