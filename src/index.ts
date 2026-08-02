@@ -8,7 +8,13 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const dataFile = path.join(__dirname, 'data', 'jogadoresEscalados.json');
+const isProduction = process.env.NODE_ENV === 'production';
+const publicPath = isProduction
+  ? path.join(__dirname, 'public')
+  : path.join(__dirname, '..', 'src', 'public');
+const dataFile = isProduction
+  ? path.join(__dirname, 'data', 'jogadoresEscalados.json')
+  : path.join(__dirname, '..', 'src', 'data', 'jogadoresEscalados.json');
 const ADMIN_USER = 'futi';
 const ADMIN_PASS_HASH = 'ce4930aa34922b23c8fccaf1b3a9bcd578b0f5a50a1b881520882ed38e5ed5b4';
 const AUTH_COOKIE_NAME = 'admin_session';
@@ -127,16 +133,16 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/admin', requireAuth, (_req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin', 'index.html'));
+  res.sendFile(path.join(publicPath, 'admin', 'index.html'));
 });
 
-app.use('/admin/', requireAuth, express.static(path.join(__dirname, 'public', 'admin')));
+app.use('/admin/', requireAuth, express.static(path.join(publicPath, 'admin')));
 
 app.get('/', (_req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(publicPath, 'index.html'));
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(publicPath));
 
 app.get('/api/ranking', async (_req, res) => {
   const arr = await loadData();

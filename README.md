@@ -24,6 +24,8 @@ npm run dev
 
 O comando `dev` usa `ts-node-dev` para recarregar automaticamente ao salvar.
 
+> No modo local, o servidor carrega os arquivos diretamente de `src`.
+
 ## Build e execução para produção
 
 ```bash
