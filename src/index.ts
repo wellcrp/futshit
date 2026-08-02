@@ -22,6 +22,7 @@ const AUTH_SECRET = 'secret-key-for-auth-token-change-if-needed';
 
 interface JogoEntry {
   data: string;
+  campo: string;
   lista: string[];
 }
 
@@ -85,14 +86,17 @@ function parsePlayerLines(listaTexto: string) {
 }
 
 app.post('/api/jogos', async (req, res) => {
-  const { data, listaTexto } = req.body as { data?: string; listaTexto?: string };
-  if (!data || !listaTexto) return res.status(400).json({ error: 'Parâmetros inválidos' });
+  const { data, campo, listaTexto } = req.body as { data?: string; campo?: string; listaTexto?: string };
+  if (!data || !campo || !listaTexto) return res.status(400).json({ error: 'Parâmetros inválidos' });
+
+  const campoValue = String(campo).trim();
+  if (!campoValue) return res.status(400).json({ error: 'Campo obrigatório' });
 
   const lista = parsePlayerLines(listaTexto);
   if (!lista.length) return res.status(400).json({ error: 'Nenhum jogador válido encontrado' });
 
   const arr = await loadData();
-  arr.push({ data, lista });
+  arr.push({ data, campo: campoValue, lista });
   await saveData(arr);
   return res.json({ ok: true });
 });
@@ -112,8 +116,11 @@ app.get('/api/jogos/:data', async (req, res) => {
 
 app.put('/api/jogos/:data', async (req, res) => {
   const { data } = req.params;
-  const { listaTexto } = req.body as { listaTexto?: string };
-  if (!listaTexto) return res.status(400).json({ error: 'Parâmetros inválidos' });
+  const { campo, listaTexto } = req.body as { campo?: string; listaTexto?: string };
+  if (!campo || !listaTexto) return res.status(400).json({ error: 'Parâmetros inválidos' });
+
+  const campoValue = String(campo).trim();
+  if (!campoValue) return res.status(400).json({ error: 'Campo obrigatório' });
 
   const lista = parsePlayerLines(listaTexto);
   if (!lista.length) return res.status(400).json({ error: 'Nenhum jogador válido encontrado' });
@@ -122,6 +129,7 @@ app.put('/api/jogos/:data', async (req, res) => {
   const index = arr.findIndex((entry) => entry.data === data);
   if (index === -1) return res.status(404).json({ error: 'Jogo não encontrado' });
 
+  arr[index].campo = campoValue;
   arr[index].lista = lista;
   await saveData(arr);
   return res.json({ ok: true });

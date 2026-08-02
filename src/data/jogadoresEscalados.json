@@ -1,13 +1,14 @@
 [
   {
     "data": "2026-07-18",
+    "campo": "Bordon",
     "lista": [
       "Dalton",
       "Igor",
       "Thiago",
       "Roberley",
       "Wellington",
-      "nathan",
+      "Nathan",
       "Anelis",
       "Mateus",
       "Felipe",
@@ -20,13 +21,14 @@
   },
   {
     "data": "2026-07-25",
+    "campo": "R6",
     "lista": [
       "Dalton",
       "Igor",
       "Anderson",
       "Roberley",
       "Wellington",
-      "nathan ",
+      "Nathan",
       "Trombela",
       "Falcão",
       "Felipe",
@@ -37,6 +39,7 @@
   },
   {
     "data": "2026-08-01",
+    "campo": "Bordon",
     "lista": [
       "Dalton",
       "Igor",
