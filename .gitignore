@@ -1,10 +1,12 @@
 .claude
 node_modules
-dist
 npm-debug.log
 .DS_Store
-# Dados dinâmicos do sistema de escala
+
+# permitimos versionar o JSON da build para manter sincronização com a origem
+!dist/
+!dist/data/
+!dist/data/jogadoresEscalados.json
+
+# dados dinâmicos do sistema de escala
 src/data/jogadoresEscalados.json
-# Opcional: manter cópia local do arquivo de dados fora do controle
-# se quiser, você pode também ignorar a versão em dist
-# dist/data/jogadoresEscalados.json

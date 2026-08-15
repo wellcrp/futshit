@@ -12,9 +12,9 @@ const isProduction = process.env.NODE_ENV === 'production';
 const publicPath = isProduction
   ? path.join(__dirname, 'public')
   : path.join(__dirname, '..', 'src', 'public');
-const dataFile = isProduction
-  ? path.join(__dirname, 'data', 'jogadoresEscalados.json')
-  : path.join(__dirname, '..', 'src', 'data', 'jogadoresEscalados.json');
+const sourceDataFile = path.join(__dirname, '..', 'src', 'data', 'jogadoresEscalados.json');
+const distDataFile = path.join(__dirname, 'data', 'jogadoresEscalados.json');
+const dataFiles = Array.from(new Set([sourceDataFile, distDataFile]));
 const ADMIN_USER = 'futi';
 const ADMIN_PASS_HASH = 'ce4930aa34922b23c8fccaf1b3a9bcd578b0f5a50a1b881520882ed38e5ed5b4';
 const AUTH_COOKIE_NAME = 'admin_session';
@@ -27,12 +27,15 @@ interface JogoEntry {
 }
 
 async function loadData(): Promise<JogoEntry[]> {
-  try {
-    const raw = await fs.readFile(dataFile, 'utf8');
-    return JSON.parse(raw) as JogoEntry[];
-  } catch (e) {
-    return [];
+  for (const filePath of dataFiles) {
+    try {
+      const raw = await fs.readFile(filePath, 'utf8');
+      return JSON.parse(raw) as JogoEntry[];
+    } catch (e) {
+      // tenta o próximo arquivo enquanto algum deles não existir
+    }
   }
+  return [];
 }
 
 function hashPassword(password: string) {
@@ -66,8 +69,12 @@ function requireAuth(req: express.Request, res: express.Response, next: express.
 }
 
 async function saveData(arr: any[]) {
-  await fs.mkdir(path.dirname(dataFile), { recursive: true });
-  await fs.writeFile(dataFile, JSON.stringify(arr, null, 2), 'utf8');
+  const json = JSON.stringify(arr, null, 2);
+
+  for (const filePath of dataFiles) {
+    await fs.mkdir(path.dirname(filePath), { recursive: true });
+    await fs.writeFile(filePath, json, 'utf8');
+  }
 }
 
 function normalizeName(name: string) {
