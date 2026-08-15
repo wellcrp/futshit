@@ -8,8 +8,8 @@ Sistema para controlar escala de jogadores, ranking e aproveitamento em partidas
 Este projeto usa Node.js + TypeScript + Express para:
 - armazenar partidas em um arquivo JSON;
 - calcular o ranking por presença;
-- exibir a quantidade de jogos por jogador;
-- calcular o percentual de aproveitamento em relação ao total de partidas registradas;
+- exibir o total de partidas cadastradas para todos os jogadores;
+- calcular o percentual de aproveitamento do jogador sobre o total de partidas registradas;
 - permitir cadastro e edição de escalas pelo painel administrativo.
 
 ## Funcionalidades
@@ -20,7 +20,7 @@ Este projeto usa Node.js + TypeScript + Express para:
   - jogador
   - botão para ver o jogo
   - pontos
-  - quantidade de jogos
+  - quantidade total de partidas cadastradas
   - aproveitamento em %
 - Total de partidas no sistema
 - Campo do último jogo registrado
@@ -64,31 +64,25 @@ Na raiz do projeto:
 npm install
 ```
 
-## Como executar em desenvolvimento
+## Como executar
+
+Este projeto foi configurado para rodar no mesmo ambiente de produção, inclusive quando usado localmente.
 
 ```bash
 npm run dev
 ```
 
-O servidor fica disponível em:
-
-- http://localhost:3000
-
-O modo de desenvolvimento usa `ts-node-dev` e recarrega automaticamente quando os arquivos são alterados.
-
-## Como executar em produção
-
-Primeiro gere a build:
-
-```bash
-npm run build
-```
-
-Depois inicie o servidor:
+ou
 
 ```bash
 npm start
 ```
+
+Em ambos os casos, o comando:
+- gera o build;
+- copia os arquivos públicos e de dados;
+- inicia o servidor em modo `NODE_ENV=production`;
+- usa a mesma estrutura da aplicação de produção.
 
 A aplicação roda em:
 
@@ -100,8 +94,7 @@ Se a variável de ambiente `PORT` estiver definida, o servidor usa esse valor em
 
 No navegador, acesse:
 
-- http://localhost:3000/admin/
-- ou http://localhost:8080/admin/
+- http://localhost:8080/admin/
 
 A autenticação do painel é feita no backend e as credenciais ficam configuradas no próprio servidor. Não exponha credenciais em arquivos públicos ou repositórios compartilhados.
 
@@ -120,8 +113,8 @@ O sistema salva a informação em `src/data/jogadoresEscalados.json`.
 
 A página inicial exibe o ranking e calcula:
 - pontos por presença;
-- quantidade de jogos por jogador;
-- aproveitamento percentual = (quantidade de jogos / total de partidas) × 100.
+- quantidade total de partidas cadastradas para todos os jogadores;
+- aproveitamento percentual = (presenças do jogador / total de partidas) × 100.
 
 ### 3. Editar dados
 
@@ -155,8 +148,8 @@ Atualiza uma partida existente pela data.
 Retorna o ranking calculado com:
 - `nome`
 - `pontos`
-- `qtdeJogos`
-- `aproveitamento`
+- `qtdeJogos` (total de partidas cadastradas para todos os jogadores)
+- `aproveitamento` (percentual de presença do jogador sobre o total de partidas)
 
 ## Arquivo de dados
 
