@@ -1,117 +1,207 @@
 
-# futshit
+# Futshit
 
-Este repositório contém um esqueleto de backend em Node.js + TypeScript dentro de `src/` que serve páginas estáticas e duas APIs simples.
+Sistema para controlar escala de jogadores, ranking e aproveitamento em partidas de futebol society.
+
+## Visão geral
+
+Este projeto usa Node.js + TypeScript + Express para:
+- armazenar partidas em um arquivo JSON;
+- calcular o ranking por presença;
+- exibir a quantidade de jogos por jogador;
+- calcular o percentual de aproveitamento em relação ao total de partidas registradas;
+- permitir cadastro e edição de escalas pelo painel administrativo.
+
+## Funcionalidades
+
+- Ranking público em página web
+- Colunas:
+  - posição
+  - jogador
+  - botão para ver o jogo
+  - pontos
+  - quantidade de jogos
+  - aproveitamento em %
+- Total de partidas no sistema
+- Campo do último jogo registrado
+- Painel administrativo para adicionar e editar partidas
+- Persistência dos dados em `src/data/jogadoresEscalados.json`
+- Login simples para acesso ao painel administrativo
+- API REST para leitura e gravação de dados
+
+## Estrutura do projeto
+
+```text
+futshit/
+├── src/
+│   ├── data/
+│   │   └── jogadoresEscalados.json
+│   ├── public/
+│   │   ├── index.html
+│   │   └── admin/
+│   │       └── index.html
+│   └── index.ts
+├── scripts/
+│   └── copy-static.js
+├── .gitignore
+├── package.json
+├── tsconfig.json
+├── README.md
+└── dist/   # gerado pelo build
+```
 
 ## Pré-requisitos
-- Node.js (v14+) e `npm` instalados.
-- Terminal aberto na raiz do repositório: `e:\CodeBox\IA\futshit`.
 
-## Instalação (uma vez)
+- Node.js 18+ recomendado
+- npm
+- Git (opcional, para versionamento)
+
+## Instalação
+
+Na raiz do projeto:
 
 ```bash
-# na raiz do repositório
 npm install
 ```
 
-Observação: este repositório já contém `package.json` e `tsconfig.json` na raiz. Se você preferir criar do zero, use os comandos e o `tsconfig.json` descritos abaixo.
-
-## Rodar em modo desenvolvimento
+## Como executar em desenvolvimento
 
 ```bash
 npm run dev
 ```
 
-O comando `dev` usa `ts-node-dev` para recarregar automaticamente ao salvar.
+O servidor fica disponível em:
 
-> No modo local, o servidor carrega os arquivos diretamente de `src`.
+- http://localhost:3000
 
-## Build e execução para produção
+O modo de desenvolvimento usa `ts-node-dev` e recarrega automaticamente quando os arquivos são alterados.
+
+## Como executar em produção
+
+Primeiro gere a build:
 
 ```bash
+npm run build
+```
+
+Depois inicie o servidor:
+
+```bash
+npm start
+```
+
+A aplicação roda em:
+
+- http://localhost:8080
+
+Se a variável de ambiente `PORT` estiver definida, o servidor usa esse valor em vez da porta padrão.
+
+## Acesso ao painel administrativo
+
+No navegador, acesse:
+
+- http://localhost:3000/admin/
+- ou http://localhost:8080/admin/
+
+A autenticação do painel é feita no backend e as credenciais ficam configuradas no próprio servidor. Não exponha credenciais em arquivos públicos ou repositórios compartilhados.
+
+## Uso do sistema
+
+### 1. Cadastrar uma partida
+
+No painel administrativo:
+- informe a data;
+- informe o campo;
+- cole a lista de jogadores, um por linha.
+
+O sistema salva a informação em `src/data/jogadoresEscalados.json`.
+
+### 2. Ver o ranking
+
+A página inicial exibe o ranking e calcula:
+- pontos por presença;
+- quantidade de jogos por jogador;
+- aproveitamento percentual = (quantidade de jogos / total de partidas) × 100.
+
+### 3. Editar dados
+
+O administrador também pode:
+- editar uma partida existente;
+- alterar o campo;
+- alterar a lista de jogadores.
+
+## API disponível
+
+### `GET /api/jogos`
+Retorna todas as partidas cadastradas.
+
+### `POST /api/jogos`
+Cria uma nova partida.
+
+Body esperado:
+
+```json
+{
+  "data": "2026-08-15",
+  "campo": "Bordon",
+  "listaTexto": "Jogador A\nJogador B\nJogador C"
+}
+```
+
+### `PUT /api/jogos/:data`
+Atualiza uma partida existente pela data.
+
+### `GET /api/ranking`
+Retorna o ranking calculado com:
+- `nome`
+- `pontos`
+- `qtdeJogos`
+- `aproveitamento`
+
+## Arquivo de dados
+
+O arquivo persistente é:
+
+```text
+src/data/jogadoresEscalados.json
+```
+
+Ele guarda as partidas no formato:
+
+```json
+[
+  {
+    "data": "2026-07-18",
+    "campo": "Bordon",
+    "lista": [
+      "Dalton",
+      "Igor",
+      "Thiago"
+    ]
+  }
+]
+```
+
+## Segurança
+
+- mantenha o arquivo de dados protegido;
+- não publique segredos no repositório;
+- não exponha credenciais em páginas públicas;
+- faça backup do JSON antes de operações em massa.
+
+## Deploy
+
+Para publicar em plataformas como Railway, Render ou VPS:
+
+```bash
+npm install
 npm run build
 npm start
 ```
 
-> O servidor usa `process.env.PORT` se definido. Localmente, ele roda em `3000` por padrão; em produção, usa `8080` quando `NODE_ENV=production`.
+Configure a variável de ambiente `PORT` conforme a plataforma e use o ambiente de produção com `NODE_ENV=production` quando necessário.
 
-## Deploy no Railway
+## Observação
 
-1. Faça commit e push do repositório para o GitHub.
-2. No Railway, crie um novo projeto e conecte o repositório GitHub.
-3. Configure o build command como:
-
-```bash
-npm run railway-build
-```
-
-4. Configure o start command como:
-
-```bash
-npm start
-```
-
-5. Se quiser forçar a porta `8080`, adicione a variável de ambiente `PORT` com valor `8080`.
-
-> Observação: o npm moderno prefere `--omit=dev` em vez de `production` para ignorar dependências de desenvolvimento. Isso evita o aviso `npm warn config production Use --omit=dev instead.`
-
-6. Verifique se Railway está usando `NODE_ENV=production` por padrão; caso contrário, não é necessário definir, pois o start já define esse valor localmente.
-
-7. Depois do deploy, acesse a URL fornecida pelo Railway.
-
-## Arquivos importantes
-- `.gitignore` — ignora `.claude`, `node_modules`, `dist`, e arquivos temporários.
-- `src/index.ts` — servidor Express com endpoints `POST /api/jogos` e `GET /api/ranking`.
-- `src/public/index.html` — página pública (ranking).
-- `src/public/admin/index.html` — painel administrativo (submissão de listas).
-- `src/data/jogadoresEscalados.json` — arquivo JSON usado para persistência (inicialmente `[]`).
-
-## Endpoints
-- `GET /api/ranking` — retorna o ranking agregado.
-- `POST /api/jogos` — aceita `{ data: "YYYY-MM-DD", listaTexto: "..." }` e persiste a entrada.
-
-## URL de administração e credenciais
-- A tela de login do admin está disponível em `http://localhost:8080/login`.
-- Credenciais atuais:
-  - Usuário: `futi`
-  - Senha: `futi12QW!@qw`
-
-## Caso precise criar os manifestos manualmente
-
-Se por algum motivo você não quiser usar os arquivos já presentes, crie `tsconfig.json` com o conteúdo abaixo e adicione os scripts ao `package.json` conforme mostrado.
-
-`tsconfig.json` sugerido:
-
-```json
-{
-	"compilerOptions": {
-		"target": "ES2020",
-		"module": "commonjs",
-		"outDir": "dist",
-		"rootDir": "src",
-		"strict": true,
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true
-	}
-}
-```
-
-Adicionar scripts ao `package.json` (exemplo):
-
-```json
-"scripts": {
-	"build": "tsc",
-	"start": "node dist/index.js",
-	"dev": "ts-node-dev --respawn --transpile-only src/index.ts"
-}
-```
-
-## Testes manuais rápidos
-
-1. Abra `http://localhost:8080/admin/` e submeta uma lista de jogadores (uma por linha).
-2. Verifique `http://localhost:8080/` ou `GET /api/ranking` para confirmar as pontuações.
-
-## Observações e segurança
-- Faça backup do arquivo `src/data/jogadoresEscalados.json` antes de operações em massa.
-- Não exponha segredos no front-end.
+O arquivo `dist/` é gerado na build e pode ser ignorado em controle de versão quando necessário, conforme o `.gitignore` do projeto.
 
