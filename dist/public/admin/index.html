@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Painel Admin - Adicionar Jogo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>body{padding:24px;background:#f8f9fa} .card{max-width:900px;margin:18px auto}</style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+      <div class="container">
+        <a class="navbar-brand" href="/">Escala - Admin</a>
+        <div class="ms-auto">
+          <a class="btn btn-outline-light btn-sm" href="/">Ver Ranking</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h4 class="card-title mb-3">Painel do Administrador: adicionar ou editar</h4>
+        <p class="text-muted">Use esta página para cadastrar novos jogos ou modificar listas já escaladas.</p>
+        <form id="form">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Data</label>
+              <input type="date" id="data" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Campo</label>
+              <input type="text" id="campo" class="form-control" placeholder="Nome do campo" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Lista (uma linha por jogador)</label>
+              <textarea id="lista" rows="10" class="form-control" placeholder="1 Dalton\n2 Igor\n..." required></textarea>
+              <div class="form-text">O sistema guarda somente o nome, removendo números e símbolos.</div>
+            </div>
+            <div class="col-12 d-flex gap-2">
+              <button id="submitBtn" class="btn btn-primary">Salvar</button>
+              <button id="clearBtn" type="button" class="btn btn-outline-secondary">Limpar</button>
+              <div id="spinner" class="spinner-border text-primary ms-2 d-none" role="status"><span class="visually-hidden">Carregando...</span></div>
+            </div>
+            <div class="col-12">
+              <div id="msg"></div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card shadow-sm mt-4">
+      <div class="card-body">
+        <h4 class="card-title mb-3">Editar jogos existentes</h4>
+        <div id="gamesList"><div class="text-center py-4">Carregando jogos...</div></div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-lg-8 offset-lg-2">
+          <div class="card mt-3">
+            <div class="card-body">
+              <h5 class="card-title">Dicas</h5>
+              <ul>
+                <li>Formate cada jogador em uma linha.</li>
+                <li>Você pode incluir o emoji de confirmação (✅); o sistema normaliza ao calcular ranking.</li>
+                <li>O arquivo de dados fica em <code>src/data/jogadoresEscalados.json</code>.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editModalLabel">Editar lista de jogadores</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Data do jogo</label>
+              <input id="editDate" type="text" class="form-control" readonly>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Campo</label>
+              <input id="editCampo" type="text" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Lista de jogadores</label>
+              <textarea id="editLista" rows="10" class="form-control"></textarea>
+              <div class="form-text">Somente nomes são salvos; números e símbolos são removidos automaticamente.</div>
+            </div>
+            <div id="editMsg"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button id="editConfirmBtn" type="button" class="btn btn-primary">Confirmar edição</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const form = document.getElementById('form');
+      const msg = document.getElementById('msg');
+      const spinner = document.getElementById('spinner');
+      const submitBtn = document.getElementById('submitBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const gamesList = document.getElementById('gamesList');
+      const editModalEl = document.getElementById('editModal');
+      const editModal = new bootstrap.Modal(editModalEl);
+      const editDateInput = document.getElementById('editDate');      const editCampoInput = document.getElementById('editCampo');      const editLista = document.getElementById('editLista');
+      const editMsg = document.getElementById('editMsg');
+      const editConfirmBtn = document.getElementById('editConfirmBtn');
+      let editDate = '';
+
+      clearBtn.addEventListener('click', () => {
+        document.getElementById('data').value = '';
+        document.getElementById('lista').value = '';
+        msg.innerHTML = '';
+      });
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        msg.innerHTML = '';
+        const data = document.getElementById('data').value;
+        const campo = document.getElementById('campo').value.trim();
+        const listaTexto = document.getElementById('lista').value.trim();
+        if(!data || !campo || !listaTexto){
+          msg.innerHTML = '<div class="alert alert-warning">Preencha data, campo e lista.</div>';
+          return;
+        }
+
+        submitBtn.setAttribute('disabled', '');
+        spinner.classList.remove('d-none');
+
+        try{
+          const res = await fetch('/api/jogos', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({data, campo, listaTexto})});
+          const body = await res.json();
+          if(res.ok){
+            msg.innerHTML = '<div class="alert alert-success">Salvo com sucesso.</div>';
+            document.getElementById('lista').value = '';
+            document.getElementById('campo').value = '';
+            loadGames();
+          } else {
+            msg.innerHTML = `<div class="alert alert-danger">Erro: ${escapeHtml(JSON.stringify(body))}</div>`;
+          }
+        }catch(err){
+          msg.innerHTML = '<div class="alert alert-danger">Falha na requisição.</div>';
+          console.error(err);
+        } finally {
+          submitBtn.removeAttribute('disabled');
+          spinner.classList.add('d-none');
+        }
+      });
+
+      gamesList.addEventListener('click', async (event) => {
+        const button = event.target.closest('[data-action="edit"]');
+        if (!button) return;
+        const date = button.dataset.date;
+        const campo = decodeURIComponent(button.dataset.campo || '');
+        const lista = JSON.parse(decodeURIComponent(button.dataset.lista || '[]'));
+        openEditModal(date, campo, lista);
+      });
+
+      editConfirmBtn.addEventListener('click', async () => {
+        editMsg.innerHTML = '';
+        if (!editDate) return;
+        const campo = editCampoInput.value.trim();
+        if (!campo) {
+          editMsg.innerHTML = '<div class="alert alert-warning">Preencha o campo.</div>';
+          return;
+        }
+        editConfirmBtn.setAttribute('disabled', '');
+        try {
+          const res = await fetch(`/api/jogos/${encodeURIComponent(editDate)}`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ campo, listaTexto: editLista.value.trim() })
+          });
+          const body = await res.json();
+          if (res.ok) {
+            editMsg.innerHTML = '<div class="alert alert-success">Edição confirmada.</div>';
+            editModal.hide();
+            loadGames();
+          } else {
+            editMsg.innerHTML = `<div class="alert alert-danger">Erro: ${escapeHtml(JSON.stringify(body))}</div>`;
+          }
+        } catch (err) {
+          editMsg.innerHTML = '<div class="alert alert-danger">Falha na requisição.</div>';
+          console.error(err);
+        } finally {
+          editConfirmBtn.removeAttribute('disabled');
+        }
+      });
+
+      function openEditModal(date, campo, lista) {
+        editDate = date;
+        editDateInput.value = date;
+        editLista.value = lista.join('\n');
+        editCampoInput.value = campo || '';
+        editMsg.innerHTML = '';
+        editModal.show();
+      }
+
+      async function loadGames() {
+        try {
+          const res = await fetch('/api/jogos');
+          if (!res.ok) throw new Error('Não foi possível carregar os jogos');
+          const jogos = await res.json();
+          jogos.sort((a, b) => String(b.data).localeCompare(String(a.data)));
+          gamesList.innerHTML = createGamesTable(jogos);
+        } catch (err) {
+          gamesList.innerHTML = '<div class="alert alert-danger">Falha ao carregar jogos.</div>';
+          console.error(err);
+        }
+      }
+
+      function createGamesTable(jogos) {
+        if (!jogos || !jogos.length) {
+          return '<div class="alert alert-info">Nenhum jogo cadastrado ainda.</div>';
+        }
+        const rows = jogos.map((jogo) => `
+          <tr>
+            <td>${escapeHtml(jogo.data)}</td>
+            <td>${escapeHtml(jogo.campo || '')}</td>
+            <td>${escapeHtml((jogo.lista || []).length.toString())}</td>
+            <td>
+              <button type="button" class="btn btn-sm btn-outline-primary" data-action="edit" data-date="${escapeHtml(jogo.data)}" data-campo="${encodeURIComponent(jogo.campo || '')}" data-lista="${encodeURIComponent(JSON.stringify(jogo.lista || []))}">Editar</button>
+            </td>
+          </tr>
+        `).join('');
+
+        return `
+          <div class="table-responsive">
+            <table class="table table-striped table-hover">
+              <thead class="table-light">
+                <tr><th>Data</th><th>Campo</th><th>Jogadores</th><th>Ação</th></tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+        `;
+      }
+
+      function escapeHtml(text){
+        if(!text) return '';
+        return text.replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"})[m]; });
+      }
+
+      loadGames();
+    </script>
+  </body>
+</html>
