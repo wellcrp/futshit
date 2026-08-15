@@ -48,14 +48,15 @@
       function createTable(data, totalGames){
         if(!data || !data.length) return '<div class="alert alert-info">Sem dados para exibir.</div>';
         const rows = data.map((row, i) => {
-          const aproveitamento = totalGames ? ((row.qtdeJogos || 0) / totalGames) * 100 : 0;
+          const qtdeJogos = Number(totalGames || 0);
+          const aproveitamento = Number(row.aproveitamento ?? (totalGames ? (Number(row.pontos || 0) / totalGames) * 100 : 0));
           return `
             <tr>
               <th scope="row">${i+1}</th>
               <td class="player-name">${escapeHtml(row.nome)}</td>
               <td><a href="#" class="player-game-link btn btn-sm btn-outline-primary" data-player="${escapeHtml(row.nome)}">Ver jogo</a></td>
               <td><span class="badge bg-success">${row.pontos}</span></td>
-              <td>${row.qtdeJogos || totalGames}</td>
+              <td>${qtdeJogos}</td>
               <td><span class="badge bg-info text-dark">${aproveitamento.toFixed(1)}%</span></td>
             </tr>
           `;

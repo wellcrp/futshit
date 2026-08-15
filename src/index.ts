@@ -203,9 +203,8 @@ app.get('/api/ranking', async (_req, res) => {
     for (const rawName of entry.lista) {
       const n = normalizeName(rawName);
       if (!n) continue;
-      const existing = map.get(n) || { nome: rawName.trim(), pontos: 0, qtdeJogos: 0, aproveitamento: 0 };
+      const existing = map.get(n) || { nome: rawName.trim(), pontos: 0, qtdeJogos: totalGames, aproveitamento: 0 };
       existing.pontos += 1;
-      existing.qtdeJogos += 1;
       map.set(n, existing);
     }
   }
@@ -213,7 +212,8 @@ app.get('/api/ranking', async (_req, res) => {
   const list = Array.from(map.values())
     .map((player) => ({
       ...player,
-      aproveitamento: totalGames ? Number(((player.qtdeJogos / totalGames) * 100).toFixed(1)) : 0,
+      qtdeJogos: totalGames,
+      aproveitamento: totalGames ? Number(((player.pontos / totalGames) * 100).toFixed(1)) : 0,
     }))
     .sort((a, b) => b.pontos - a.pontos || b.qtdeJogos - a.qtdeJogos);
 

@@ -25,3 +25,4 @@ Este repositório é orientado para desenvolvimento web com foco em:
 - Evitar dependências desnecessárias.
 - Manter o código organizado, claro e fácil de evoluir.
 - Documentar mudanças importantes no contexto do projeto.
+- Tarefa em andamento: incluir coluna de aproveitamento no ranking, calculando percentual de jogos participados sobre o total de partidas registradas.
