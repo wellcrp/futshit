@@ -236,5 +236,45 @@
       "Thiago",
       "Anderson"
     ]
+  },
+  {
+    "data": "2026-10-10",
+    "campo": "Bordon 3",
+    "lista": [
+      "Dalton",
+      "Anelis",
+      "Roberley",
+      "Wellington",
+      "Piruca",
+      "Ricardo",
+      "Igor",
+      "Nathan",
+      "Felipe",
+      "Maylon",
+      "Guilherme",
+      "Trombela",
+      "Anderson",
+      "Mateus"
+    ]
+  },
+  {
+    "data": "2026-10-17",
+    "campo": "Bordon 3",
+    "lista": [
+      "Dalton",
+      "Anelis",
+      "Roberley",
+      "Pedro",
+      "Piruca",
+      "Ricardo",
+      "Vitor Ricardo",
+      "Igor",
+      "Nathan",
+      "Felipe",
+      "Guilherme",
+      "Trombela",
+      "Anderson",
+      "Mateus"
+    ]
   }
 ]
