@@ -332,5 +332,45 @@
       "Thiago",
       "Pedro"
     ]
+  },
+  {
+    "data": "2026-11-14",
+    "campo": "Bordon 3",
+    "lista": [
+      "Dalton",
+      "Wellington",
+      "Roberley",
+      "Piruca",
+      "Falcao",
+      "Anelis",
+      "Nathan",
+      "Matheus",
+      "Mikelson",
+      "Guilherme",
+      "Ricardo",
+      "Anderson",
+      "Trombela",
+      "Felipe"
+    ]
+  },
+  {
+    "data": "2026-11-21",
+    "campo": "Bordon 3",
+    "lista": [
+      "Nathan",
+      "Falcao",
+      "Felipe",
+      "Vitor Ricardo",
+      "Roberley",
+      "Anelis",
+      "Mike",
+      "Igor",
+      "Ricardo",
+      "Guilherme",
+      "Dalton",
+      "Pedro",
+      "Matheus",
+      "Trombela"
+    ]
   }
 ]
